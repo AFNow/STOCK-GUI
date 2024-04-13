@@ -9,7 +9,6 @@ import flask # Will be useful later
 
 from functions import add_varuable # Will be useful later
 
-
 # Default visual theme
 customtkinter.set_appearance_mode('dark') 
 customtkinter.set_default_color_theme("STOCK-GUI/theme.json")
@@ -66,19 +65,9 @@ STOCK_GUI.attributes('-alpha', 0.85)
 STOCK_GUI.mainloop()
 
 
-
 # if __name__ == '__main__':
 #       main(sys.argv)
-
 
 # Добавить возможность создания новых фреймов при нажатии на кнопку
 # Сделать окно создания фрейма
 # Добавить возможность удаления фреймов при нажатии на кнопку самого фрейма
-#
-
-#stock_frame = customtkinter.CTkFrame(master= main_frame, 
-#                                    width= stock_frame_size_x, height= stock_frame_size_y, 
-#                                    corner_radius= 13, border_width= None, 
-#                                    bg_color= 'transparent',fg_color= 'gray11', 
-#                                    border_color= None)
-#stock_frame.pack(padx= 10, pady= 10, expand=False)
