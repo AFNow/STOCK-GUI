@@ -2,14 +2,16 @@ import sys # Will be useful later
 
 import customtkinter # UI library
 
-import yfinance # Will be useful later
+import googlefinance # Will be useful later
 import pandas # Will be useful later
 import flask # Will be useful later
+
+import datetime
 
 
 # Default visual theme
 customtkinter.set_appearance_mode('dark') 
-customtkinter.set_default_color_theme("STOCK-GUI/theme.json")
+customtkinter.set_default_color_theme("theme.json")
 
 # Window arguments
 STOCK_GUI = customtkinter.CTk()
@@ -19,7 +21,7 @@ rootHeight = STOCK_GUI.winfo_height()
 rootWidth = STOCK_GUI.winfo_width()
 
 # Setting window icon
-STOCK_GUI.iconbitmap('STOCK-GUI/stock_icon-favi.ico')
+STOCK_GUI.iconbitmap('stock_icon-favi.ico')
 
 # Background frame
 main_frame = customtkinter.CTkScrollableFrame(master= STOCK_GUI,  # The main background frame
