@@ -1,13 +1,10 @@
-import sys # Will be useful later
-
 import customtkinter # UI library
 
-import googlefinance # Will be useful later
-import pandas # Will be useful later
-import flask # Will be useful later
+import time 
 
-import datetime
+import threading
 
+from functions import get_stock_data
 
 # Default visual theme
 customtkinter.set_appearance_mode('dark') 
@@ -41,8 +38,9 @@ bottom_frame.grid(row=9, column=0, sticky='nsew')
 #Stock frame class
 class StockFrame(customtkinter.CTkFrame):
     frame_qty = 1
-    def __init__(self, master, **kwargs):
+    def __init__(self, master, stock_name = 'NASDAQ', stock_cost=None, **kwargs):
         self.root = main_frame
+        self.stock_name = stock_name
         super().__init__(master, **kwargs)
         self.frame = customtkinter.CTkFrame(master=main_frame,
                                             width=stock_frame_size_x, height=stock_frame_size_y,
@@ -52,17 +50,17 @@ class StockFrame(customtkinter.CTkFrame):
         self.frame.pack(anchor=customtkinter.CENTER, expand=False, pady=10)
 
         # The label of stock's name 
-        name_var = 'Stock_Name' ###
+        name_var = stock_name ###
         name_label_font = customtkinter.CTkFont(family="Roboto", size=35, weight="bold")
         actual_color = 'white' #### Later it will be changed every tick
-        self.name_label = customtkinter.CTkLabel(master=self.frame, textvariable=name_var, font = name_label_font, text= 'STCK', text_color = actual_color)
+        self.name_label = customtkinter.CTkLabel(master=self.frame, textvariable=name_var, font = name_label_font, text= name_var, text_color = actual_color)
         self.name_label.place(relx=0.1, rely=0.3, anchor=customtkinter.W)
 
         # The label of stock's cost 
-        text_var = 'Stock_Cost' ###
+        cost_var = '' ###
         cost_label_font = customtkinter.CTkFont(family="Roboto", size=12, weight="normal")
         actual_color = 'white' #### Later it will be changed every tick
-        self.cost_label = customtkinter.CTkLabel(master=self.frame, textvariable=text_var, font = cost_label_font, text= '$1.000', text_color = actual_color)
+        self.cost_label = customtkinter.CTkLabel(master=self.frame, textvariable=cost_var, font = cost_label_font, text= cost_var, text_color = actual_color)
         self.cost_label.place(relx=0.1, rely=0.6, anchor=customtkinter.W)   
 
         # The label of stock's % 
@@ -78,19 +76,38 @@ class StockFrame(customtkinter.CTkFrame):
 
     # New frame creating function
     def open_new_frame(self):
-        new_frame = StockFrame(self.root)
+        entry_str = entry.get()
+        if entry_str != '':
+            new_frame = StockFrame(self.root, entry_str)
+            return entry_str
+        else:
+            pass
+
+    def update_stock_data(self):
+        while True:
+            self.stock_cost = get_stock_data(self.stock_name)
+            self.cost_var = self.stock_cost
+            self.cost_label.configure(text=str(self.cost_var))  # Обновляем текст метки с новой ценой акции
+            time.sleep(5)
+
+    
+    def update_interface(self):
+        self.cost_label.config(text=str(self.cost_var))
+
     # Frame deleting function
     def delete_frame(self):
         self.frame.destroy()
 
 # StockFrame varuables
+
 stock_frame_size_x = 300
 stock_frame_size_y = 100
 window_size_x = (stock_frame_size_x * 1) +40
 window_size_y = (stock_frame_size_y) + 300
 # Binding the StockFrame to the main_frame
-stock_frame = StockFrame(main_frame) 
+stock_frame = StockFrame(main_frame, stock_name='^IXIC', stock_cost = get_stock_data('^IXIC'))
 
+threading.Thread(target=stock_frame.update_stock_data, daemon=True).start()
 
 # Add button settings
 add_btn = customtkinter.CTkButton(master= bottom_frame, text= 'Add new', command= stock_frame.open_new_frame, height= 35, width= 145)
