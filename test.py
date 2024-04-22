@@ -18,3 +18,5 @@ for item in items:
     #item_raise = item.find("jsname", {"class": "NydbP VOXKNe tnNmPe"}).text
 print(stock_description)
 #print(item_raise)
+
+# https://habr.com/ru/articles/544828/
