@@ -42,7 +42,7 @@ bottom_frame.grid(row=9, column=0, sticky='nsew')
 
 #Stock frame class
 class StockFrame(customtkinter.CTkFrame):
-    def __init__(self, master, stock_name, stock_cost, stock_raise, **kwargs):
+    def __init__(self, master, stock_name, stock_cost, stock_change, **kwargs):
         self.root = main_frame
         self.stock_name = stock_name
         super().__init__(master, **kwargs)
@@ -62,14 +62,14 @@ class StockFrame(customtkinter.CTkFrame):
 
         # The label of stock's cost 
         cost_var = stock_cost ###
-        cost_label_font = customtkinter.CTkFont(family="Roboto", size=12, weight="normal")
+        cost_label_font = customtkinter.CTkFont(family="Roboto", size=12, weight="bold")
         actual_color = 'white' #### Later it will be changed every tick
         self.cost_label = customtkinter.CTkLabel(master=self.frame, textvariable=cost_var, font = cost_label_font, text= cost_var, text_color = actual_color)
         self.cost_label.place(relx=0.1, rely=0.6, anchor=customtkinter.W)   
 
         # The label of stock's % 
-        raise_var = stock_raise ###
-        percent_label_font = customtkinter.CTkFont(family="Roboto", size=12, weight="normal")
+        raise_var = stock_change ###
+        percent_label_font = customtkinter.CTkFont(family="Roboto", size=12, weight="bold")
         actual_color = 'white' #### Later it will be changed every tick
         self.cost_label = customtkinter.CTkLabel(master=self.frame, textvariable=raise_var, font = percent_label_font, text= raise_var, text_color = actual_color)
         self.cost_label.place(relx=0.1, rely=0.8, anchor=customtkinter.W)   
@@ -85,10 +85,10 @@ class StockFrame(customtkinter.CTkFrame):
         global stock_frame
         entry_str = entry.get()
         if entry_str != '':
-            stock_cost = get_stock_data(entry_str).get('item_cost')
-            # stock_raise = get_stock_data(entry_str).get('item_raise')
-            # stock_gain = get_stock_data(entry_str).get('item_gain')
-            stock_frame = StockFrame(main_frame, stock_name=entry_str, stock_cost=stock_cost, stock_raise='')
+            stock_cost = get_stock_data(entry_str).get('last_close') + ' -> ' + get_stock_data(entry_str).get('item_cost')
+            # stock_raise = get_stock_data(entry_str).get('item_raise') # Looks like this can't be parsed at all and needs to be calculated in difference between two cost parses
+            stock_change = round(get_stock_data(entry_str).get('change'), 2)
+            stock_frame = StockFrame(main_frame, stock_name=entry_str, stock_cost=stock_cost, stock_change=stock_change)
     
     # Frame deleting function
     def delete_frame(self):

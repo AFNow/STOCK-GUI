@@ -10,12 +10,10 @@ def get_stock_data(stock_name):
     page = requests.get(end_url)
     # Grabbing content using parser
     soup = BeautifulSoup(page.content, "html.parser")
-    # Description
-    items = soup.find_all("div", {"class": "ln0Gqe"})
-    # Packing the description in dictionary by iterator
+    # Packing the description in dictionary
     stock_description = {}
-    for item in items:
-        stock_description['item_cost'] = item.find("div", {"class": "YMlKec fxKbKc"}).text
+    stock_description['item_cost'] = soup.find("div", {"class": "YMlKec fxKbKc"}).text[1:]
+    stock_description['last_close'] = soup.find("div", {"class": "P6K39c"}).text[1:]
+    stock_description['change'] =float(stock_description.get('item_cost')) - float(stock_description.get('last_close'))
         # Another parser for the raise %
-        # Another parser for the gain
     return stock_description
