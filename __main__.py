@@ -42,37 +42,46 @@ bottom_frame.grid(row=9, column=0, sticky='nsew')
 
 #Stock frame class
 class StockFrame(customtkinter.CTkFrame):
-    def __init__(self, master, stock_name, stock_cost, stock_change, **kwargs):
+    def __init__(self, master, stock_name, stock_cost, stock_change, stock_raise, **kwargs):
         self.root = main_frame
         self.stock_name = stock_name
         super().__init__(master, **kwargs)
         self.frame = customtkinter.CTkFrame(master=main_frame,
-                                            width=300, height=100,
+                                            width=300, height=110,
                                             corner_radius=13, border_width=None,
                                             bg_color='transparent', fg_color='gray11',
                                             border_color=None)
         self.frame.pack(anchor=customtkinter.CENTER, expand=False, pady=10)
 
+        main_label_font = customtkinter.CTkFont(family="Roboto", size=35, weight="bold")
+        secondary_label_font = customtkinter.CTkFont(family="Roboto", size=12, weight="bold")
+
+        if stock_change > 0:
+            actual_color = 'green'
+        elif stock_change < 0:
+            actual_color = 'red'
+        else:
+            actual_color = 'white' #### Later it will be changed every tick
+
         # The label of stock's name 
         name_var = stock_name ###
-        name_label_font = customtkinter.CTkFont(family="Roboto", size=35, weight="bold")
-        actual_color = 'white' #### Later it will be changed every tick
-        self.name_label = customtkinter.CTkLabel(master=self.frame, textvariable=name_var, font = name_label_font, text= name_var, text_color = actual_color)
-        self.name_label.place(relx=0.1, rely=0.3, anchor=customtkinter.W)
+        self.name_label = customtkinter.CTkLabel(master=self.frame, textvariable=name_var, font = main_label_font, text= name_var, text_color = 'white')
+        self.name_label.place(relx=0.1, rely=0.23, anchor=customtkinter.W)
 
         # The label of stock's cost 
         cost_var = stock_cost ###
-        cost_label_font = customtkinter.CTkFont(family="Roboto", size=12, weight="bold")
-        actual_color = 'white' #### Later it will be changed every tick
-        self.cost_label = customtkinter.CTkLabel(master=self.frame, textvariable=cost_var, font = cost_label_font, text= cost_var, text_color = actual_color)
-        self.cost_label.place(relx=0.1, rely=0.6, anchor=customtkinter.W)   
+        self.cost_label = customtkinter.CTkLabel(master=self.frame, textvariable=cost_var, font = secondary_label_font, text= cost_var, text_color = actual_color)
+        self.cost_label.place(relx=0.1, rely=0.63, anchor=customtkinter.W)   
 
-        # The label of stock's % 
-        raise_var = stock_change ###
-        percent_label_font = customtkinter.CTkFont(family="Roboto", size=12, weight="bold")
-        actual_color = 'white' #### Later it will be changed every tick
-        self.cost_label = customtkinter.CTkLabel(master=self.frame, textvariable=raise_var, font = percent_label_font, text= raise_var, text_color = actual_color)
-        self.cost_label.place(relx=0.1, rely=0.8, anchor=customtkinter.W)   
+        # The label of stock's raise
+        stock_change_var = '$' + str(stock_change) ###
+        self.change_label = customtkinter.CTkLabel(master=self.frame, textvariable=stock_change_var, font = secondary_label_font, text= stock_change_var, text_color = actual_color)
+        self.change_label.place(relx=0.3, rely=0.83, anchor=customtkinter.W)   
+        
+        # The label of stock's raise %
+        raise_percent_var = str(stock_raise) + '%'###
+        self.raise_percent_label = customtkinter.CTkLabel(master=self.frame, textvariable=raise_percent_var, font = secondary_label_font, text= raise_percent_var, text_color = actual_color)
+        self.raise_percent_label.place(relx=0.1, rely=0.83, anchor=customtkinter.W)   
 
         delete_btn = customtkinter.CTkButton(master=self.frame, text='', command=self.delete_frame,
                                           height=10, width=295, corner_radius = 13, fg_color = 'transparent', hover_color='#9c322a')
@@ -85,21 +94,14 @@ class StockFrame(customtkinter.CTkFrame):
         global stock_frame
         entry_str = entry.get()
         if entry_str != '':
-            stock_cost = get_stock_data(entry_str).get('last_close') + ' -> ' + get_stock_data(entry_str).get('item_cost')
-            # stock_raise = get_stock_data(entry_str).get('item_raise') # Looks like this can't be parsed at all and needs to be calculated in difference between two cost parses
+            stock_cost = '$' + get_stock_data(entry_str).get('last_close') + '  ->  ' + '$' + get_stock_data(entry_str).get('item_cost')
             stock_change = round(get_stock_data(entry_str).get('change'), 2)
-            stock_frame = StockFrame(main_frame, stock_name=entry_str, stock_cost=stock_cost, stock_change=stock_change)
+            stock_raise = round((float(stock_change) / float(get_stock_data(entry_str).get('item_cost'))) * 100, 2)
+            stock_frame = StockFrame(main_frame, stock_name=entry_str, stock_cost=stock_cost, stock_change=stock_change, stock_raise=stock_raise)
     
     # Frame deleting function
     def delete_frame(self):
         self.frame.destroy()
-    
-    #def update_stock_data(self):
-    #while True:
-        #self.stock_cost = get_stock_data(self.stock_name)
-        #self.cost_var = self.stock_cost
-        #self.cost_label.configure(text=str(self.cost_var))  
-        #time.sleep(5)
 
 
 # Add button settings
