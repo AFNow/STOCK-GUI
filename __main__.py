@@ -39,7 +39,6 @@ bottom_frame = customtkinter.CTkFrame(master= STOCK_GUI,  # The bottom frame for
                                     border_color= None)
 bottom_frame.grid(row=9, column=0, sticky='nsew')
 
-
 #Stock frame class
 class StockFrame(customtkinter.CTkFrame):
     def __init__(self, master, stock_name, stock_cost, stock_change, stock_raise, **kwargs):
@@ -87,16 +86,26 @@ class StockFrame(customtkinter.CTkFrame):
                                           height=10, width=295, corner_radius = 13, fg_color = 'transparent', hover_color='#9c322a')
         delete_btn.place(relx=0.5, rely=0.98, anchor=customtkinter.CENTER)
 
+    # Cоздание экземпляра класса StockFrame при запуске, из файла stocks.json
+    stock_frame = None
+    def restore_frame(entry_str):
+        global stock_frame
+        if entry_str != '':
+            stock_data = get_stock_data(entry_str)
+            stock_cost = '$' + stock_data.get('last_close') + '  ->  ' + '$' + stock_data.get('item_cost')
+            stock_change = round(stock_data.get('change'), 2)
+            stock_raise = round((float(stock_change) / float(stock_data.get('item_cost'))) * 100, 2)
+            stock_frame = StockFrame(main_frame, stock_name=entry_str, stock_cost=stock_cost, stock_change=stock_change, stock_raise=stock_raise)
 
     # Создание экземпляра класса StockFrame при вызове функции open_new_frame()
-    stock_frame = None
     def open_new_frame():
         global stock_frame
         entry_str = entry.get()
         if entry_str != '':
-            stock_cost = '$' + get_stock_data(entry_str).get('last_close') + '  ->  ' + '$' + get_stock_data(entry_str).get('item_cost')
-            stock_change = round(get_stock_data(entry_str).get('change'), 2)
-            stock_raise = round((float(stock_change) / float(get_stock_data(entry_str).get('item_cost'))) * 100, 2)
+            stock_data = get_stock_data(entry_str)
+            stock_cost = '$' + stock_data.get('last_close') + '  ->  ' + '$' + stock_data.get('item_cost')
+            stock_change = round(stock_data.get('change'), 2)
+            stock_raise = round((float(stock_change) / float(stock_data.get('item_cost'))) * 100, 2)
             stock_frame = StockFrame(main_frame, stock_name=entry_str, stock_cost=stock_cost, stock_change=stock_change, stock_raise=stock_raise)
     
     # Frame deleting function
@@ -115,14 +124,28 @@ entry.place (anchor = customtkinter.SW, relx = 0.05, rely = 0.7)
 
 # The window and grid settings
 STOCK_GUI.geometry(str(window_size_x)+'x'+str(window_size_y))
-STOCK_GUI.attributes('-alpha', 0.8)
+STOCK_GUI.attributes('-alpha', 0.9)
 STOCK_GUI.grid_rowconfigure(0, weight=1)
 STOCK_GUI.grid_columnconfigure(1, weight=0)
 STOCK_GUI.grid_columnconfigure(0, weight=1) 
+
+# The reading stocks.json operation if it contains comething
+#with open('stocks.json', mode = 'r', encoding='utf-8') as file:
+#    text = [file.read()]
+#    print (text)
+#    if text != '':
+#        pass
+#            while index != len(read_stock_name):
+#                stock_name = read_stock_name[0:index]
+            
+#        print(read_stock_name)
+            #StockFrame.restore_frame(reading_stock_name[0:4])
+            #if reading_stock_name != ' ':
+#        break
+        
 STOCK_GUI.mainloop()
 
 
 # Сделать параметры создания фрейма
 # Добавить цикл обновления фреймов
-# Добавить файл, где будут записываться настройки фреймов
 # Добавить чтение фреймов при запуске, если уже имеется файл с настройками фреймов
