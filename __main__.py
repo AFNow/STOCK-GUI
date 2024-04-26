@@ -35,7 +35,7 @@ main_frame.grid(row=0, column=0, sticky='ns')
 
 # Bottom frame
 bottom_frame = customtkinter.CTkFrame(master= STOCK_GUI,  # The bottom frame for button and entry 
-                                    corner_radius= 0, border_width= None, fg_color= 'gray10', width=300, height=80,
+                                    corner_radius= 0, border_width= None, fg_color= 'gray10', width=300, height=120,
                                     border_color= None)
 bottom_frame.grid(row=9, column=0, sticky='nsew')
 
@@ -101,13 +101,21 @@ class StockFrame(customtkinter.CTkFrame):
     def open_new_frame():
         global stock_frame
         entry_str = entry.get()
+        index_choice = combo_box.get()
+        print (index_choice)
         if entry_str != '':
-            stock_data = get_stock_data(entry_str)
+            stock_data = get_stock_data(entry_str, index_choice)
+            print (type(stock_data))
             stock_cost = '$' + stock_data.get('last_close') + '  ->  ' + '$' + stock_data.get('item_cost')
+            print (type(stock_cost))
             stock_change = round(stock_data.get('change'), 2)
             stock_raise = round((float(stock_change) / float(stock_data.get('item_cost'))) * 100, 2)
             stock_frame = StockFrame(main_frame, stock_name=entry_str, stock_cost=stock_cost, stock_change=stock_change, stock_raise=stock_raise)
-    
+            if type(stock_cost) == str: #????#????#????
+                info_label.configure(text = 'Done')#????#????#????
+            else:
+                info_label.configure(text = 'Error') #????#????#????#????
+   
     # Frame deleting function
     def delete_frame(self):
         self.frame.destroy()
@@ -115,12 +123,21 @@ class StockFrame(customtkinter.CTkFrame):
 
 # Add button settings
 add_btn = customtkinter.CTkButton(master= bottom_frame, text= 'Add new', command= StockFrame.open_new_frame, height= 35, width= 145)
-add_btn.place(anchor = customtkinter.SE, relx = 0.95, rely = 0.7)
+add_btn.place(anchor = customtkinter.SE, relx = 0.95, rely = 0.8)
 
 # Entry settings
 entry = customtkinter.CTkEntry(master=bottom_frame, placeholder_text="The stock name", height= 35, width= 145)
-entry.place (anchor = customtkinter.SW, relx = 0.05, rely = 0.7)
+entry.place (anchor = customtkinter.SW, relx = 0.05, rely = 0.8)
 
+# Combo box for the stock index selection
+combo_box = customtkinter.CTkComboBox(master=bottom_frame, width = 145, values= ['NASDAQ', 'NYSE', 'index3'])
+combo_box.place (anchor = customtkinter.SW, relx = 0.05, rely =0.4)
+
+# Info-label 
+main_label_font = customtkinter.CTkFont(family="Roboto", size=20, weight="bold")
+status = None  ###
+info_label = customtkinter.CTkLabel(master=bottom_frame, textvariable=status, font = main_label_font, text= status, text_color = 'white')
+info_label.place(anchor = customtkinter.SE, relx = 0.95, rely = 0.4)
 
 # The window and grid settings
 STOCK_GUI.geometry(str(window_size_x)+'x'+str(window_size_y))
