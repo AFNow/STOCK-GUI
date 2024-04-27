@@ -20,21 +20,18 @@ def get_stock_data(stock_name, index):
 
 
 # Writing the stock_description to the file
-def saving_stock(stock_name, index):
-    print (stock_name, index)
+def save_stock(stock_name, index):
     with open('stocks.json', mode = 'r+', encoding='utf-8') as file:
         text = file.read()
         if stock_name in text:
-            print('text has ' + stock_name)
+            pass
         else:
             file.write(stock_name +' '+ index + '\n')
 
 
-# The font color operation for the stock status
-#def status_color_changer():
-#if stock_change > 0:
-#    actual_color = 'green'
-#elif stock_change < 0:
-#    actual_color = 'red'
-#else:
-#    actual_color = 'white'
+def delete_stock(stock_name, index):
+    pass
+
+# The font color operation for the status
+def status_color_changer():
+    pass

@@ -2,6 +2,7 @@
 This file contains the base interface, for now..., and theme settings + comments
 
 '''
+import time
 
 import customtkinter # UI library
 
@@ -100,7 +101,7 @@ class StockFrame(customtkinter.CTkFrame):
                 index = 0
                 while index != len(splitted_text):
                     stock_data = get_stock_data(splitted_text[index], splitted_text[index+1])
-                    stock_cost = 'Last close: $' + stock_data.get('last_close') + '    ' + 'Now :$' + stock_data.get('item_cost')
+                    stock_cost = 'Last close: $' + stock_data.get('last_close') + '    ' + 'Now: $' + stock_data.get('item_cost')
                     stock_change = round(stock_data.get('change'))
                     stock_raise = round((float(stock_change) / float(stock_data.get('item_cost'))) * 100, 2)
                     stock_frame = StockFrame(main_frame, stock_name=splitted_text[index], stock_cost=stock_cost, stock_change=stock_change, stock_raise=stock_raise)
@@ -112,18 +113,22 @@ class StockFrame(customtkinter.CTkFrame):
     def open_new_frame():
         try:
             global stock_frame
-            entry_str = entry.get()
-            index_choice = combo_box.get()
+            entry_str = name_entry.get()
+            index_choice = index_entry.get()
             if entry_str != '':
                 stock_data = get_stock_data(entry_str, index_choice)
-                stock_cost = 'Close: $' + stock_data.get('last_close') + '          ' + 'Now :$' + stock_data.get('item_cost')
+                stock_cost = 'Close: $' + stock_data.get('last_close') + '          ' + 'Now: $' + stock_data.get('item_cost')
                 stock_change = round(stock_data.get('change'))
                 stock_raise = round((float(stock_change) / float(stock_data.get('item_cost'))) * 100, 2)
                 stock_frame = StockFrame(main_frame, stock_name=entry_str, stock_cost=stock_cost, stock_change=stock_change, stock_raise=stock_raise)
-                info_label.configure(text = 'Done')
-                saving_stock(entry_str, index_choice)
+                info_label.configure(text = 'Done', text_color = 'green')
+                save_stock(entry_str, index_choice)
+                index_entry.delete(0, 'end')
+                name_entry.delete(0, 'end')
         except AttributeError:
-            info_label.configure(text = 'Wrong name')
+            info_label.configure(text = 'Wrong name', text_color = 'red')
+            index_entry.delete(0, 'end')
+            name_entry.delete(0, 'end')
    
     # Frame deleting function
     def delete_frame(self):
@@ -134,18 +139,19 @@ class StockFrame(customtkinter.CTkFrame):
 add_btn = customtkinter.CTkButton(master= bottom_frame, text= 'Add new', command= StockFrame.open_new_frame, height= 35, width= 145)
 add_btn.place(anchor = customtkinter.SE, relx = 0.95, rely = 0.8)
 
-# Entry settings
-entry = customtkinter.CTkEntry(master=bottom_frame, placeholder_text="The stock name", height= 35, width= 145)
-entry.place (anchor = customtkinter.SW, relx = 0.05, rely = 0.8)
+# Entry for the stock name's settings
+name_entry = customtkinter.CTkEntry(master=bottom_frame, placeholder_text="The stock name", height= 35, width= 145)
+name_entry.place (anchor = customtkinter.SW, relx = 0.05, rely = 0.8)
 
-# Combo box for the stock index selection
-combo_box = customtkinter.CTkComboBox(master=bottom_frame, width = 145, values= ['NASDAQ', 'NYSE', 'index3'])
-combo_box.place (anchor = customtkinter.SW, relx = 0.05, rely =0.4)
+# Entry for the index name's settings
+index_entry = customtkinter.CTkEntry(master=bottom_frame, placeholder_text="The index", height= 35, width= 145)
+index_entry.place (anchor = customtkinter.SW, relx = 0.05, rely = 0.4)
 
 # Info-label 
 main_label_font = customtkinter.CTkFont(family="Roboto", size=20, weight="bold")
 status = None
-info_label = customtkinter.CTkLabel(master=bottom_frame, textvariable=status, font = main_label_font, text= status, text_color = 'white')
+status_color = status_color_changer()
+info_label = customtkinter.CTkLabel(master=bottom_frame, textvariable=status, font = main_label_font, text= status)
 info_label.place(anchor = customtkinter.CENTER, relx = 0.73, rely = 0.3)
 
 
@@ -162,3 +168,4 @@ StockFrame.restore_frames()
 STOCK_GUI.mainloop()
 
 # Добавить цикл обновления фреймов
+# Добавить функцию удаления из файла
