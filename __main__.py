@@ -142,17 +142,13 @@ entry.place (anchor = customtkinter.SW, relx = 0.05, rely = 0.8)
 combo_box = customtkinter.CTkComboBox(master=bottom_frame, width = 145, values= ['NASDAQ', 'NYSE', 'index3'])
 combo_box.place (anchor = customtkinter.SW, relx = 0.05, rely =0.4)
 
-
-
 # Info-label 
 main_label_font = customtkinter.CTkFont(family="Roboto", size=20, weight="bold")
-status = None  
-
+status = None
 info_label = customtkinter.CTkLabel(master=bottom_frame, textvariable=status, font = main_label_font, text= status, text_color = 'white')
 info_label.place(anchor = customtkinter.CENTER, relx = 0.73, rely = 0.3)
 
 
-    
 # The window and grid settings
 STOCK_GUI.geometry(str(window_size_x)+'x'+str(window_size_y))
 STOCK_GUI.attributes('-alpha', 0.9)
@@ -160,19 +156,8 @@ STOCK_GUI.grid_rowconfigure(0, weight=1)
 STOCK_GUI.grid_columnconfigure(1, weight=0)
 STOCK_GUI.grid_columnconfigure(0, weight=1)
 
-# The reading stocks.json operation if it contains something
-#with open('stocks.json', mode = 'r', encoding='utf-8') as file:
-#    text = [file.read()]
-#    print (text)
-#    if text != '':
-#        pass
-#            while index != len(read_stock_name):
-#                stock_name = read_stock_name[0:index]
-            
-#        print(read_stock_name)
-            #StockFrame.restore_frame(reading_stock_name[0:4])
-            #if reading_stock_name != ' ':
-#        break
+
+# The frame restore and mainloop
 StockFrame.restore_frames()
 STOCK_GUI.mainloop()
 
