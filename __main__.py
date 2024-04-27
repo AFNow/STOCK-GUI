@@ -87,16 +87,26 @@ class StockFrame(customtkinter.CTkFrame):
                                           height=10, width=295, corner_radius = 13, fg_color = 'transparent', hover_color='#9c322a')
         delete_btn.place(relx=0.5, rely=0.98, anchor=customtkinter.CENTER)
 
+    # The stock_frame default state
+    stock_frame = None
+    
     # Cоздание экземпляра класса StockFrame при запуске, из файла stocks.json
-    #stock_frame = None
-    #def restore_frame(entry_str):
-    #    global stock_frame
-    #    if entry_str != '':
-    #        stock_data = get_stock_data(entry_str)
-    #        stock_cost = 'Last close: $' + stock_data.get('last_close') + '    ' + 'Now :$' + stock_data.get('item_cost')
-    #        stock_change = round(stock_data.get('change'))
-    #        stock_raise = round((float(stock_change) / float(stock_data.get('item_cost'))) * 100, 2)
-    #        stock_frame = StockFrame(main_frame, stock_name=entry_str, stock_cost=stock_cost, stock_change=stock_change, stock_raise=stock_raise)
+    def restore_frames():
+        global stock_frame
+        with open('stocks.json', mode = 'r', encoding='utf-8') as file:
+            text = file.read()
+            if text != '':
+                splitted_text = text.split()
+                index = 0
+                while index != len(splitted_text):
+                    stock_data = get_stock_data(splitted_text[index], splitted_text[index+1])
+                    stock_cost = 'Last close: $' + stock_data.get('last_close') + '    ' + 'Now :$' + stock_data.get('item_cost')
+                    stock_change = round(stock_data.get('change'))
+                    stock_raise = round((float(stock_change) / float(stock_data.get('item_cost'))) * 100, 2)
+                    stock_frame = StockFrame(main_frame, stock_name=splitted_text[index], stock_cost=stock_cost, stock_change=stock_change, stock_raise=stock_raise)
+                    index += 2
+            else:
+                pass    
 
     # The creation of class example open_new_frame()
     def open_new_frame():
@@ -112,8 +122,8 @@ class StockFrame(customtkinter.CTkFrame):
                 stock_frame = StockFrame(main_frame, stock_name=entry_str, stock_cost=stock_cost, stock_change=stock_change, stock_raise=stock_raise)
                 info_label.configure(text = 'Done')
                 saving_stock(entry_str, index_choice)
-        except KeyError:
-            info_label.configure(text = 'Error')
+        except AttributeError:
+            info_label.configure(text = 'Wrong name')
    
     # Frame deleting function
     def delete_frame(self):
@@ -136,9 +146,8 @@ combo_box.place (anchor = customtkinter.SW, relx = 0.05, rely =0.4)
 
 # Info-label 
 main_label_font = customtkinter.CTkFont(family="Roboto", size=20, weight="bold")
-status = None  ###
+status = None  
 
-# The font color operation for the status
 info_label = customtkinter.CTkLabel(master=bottom_frame, textvariable=status, font = main_label_font, text= status, text_color = 'white')
 info_label.place(anchor = customtkinter.CENTER, relx = 0.73, rely = 0.3)
 
@@ -164,8 +173,7 @@ STOCK_GUI.grid_columnconfigure(0, weight=1)
             #StockFrame.restore_frame(reading_stock_name[0:4])
             #if reading_stock_name != ' ':
 #        break
-        
+StockFrame.restore_frames()
 STOCK_GUI.mainloop()
 
 # Добавить цикл обновления фреймов
-# Добавить чтение фреймов при запуске, если уже имеется файл с настройками фреймов

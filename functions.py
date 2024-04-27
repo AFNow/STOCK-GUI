@@ -1,3 +1,4 @@
+# This file contains side non-class functions
 import requests
 from bs4 import BeautifulSoup
 def get_stock_data(stock_name, index):
@@ -26,8 +27,4 @@ def saving_stock(stock_name, index):
         if stock_name in text:
             print('text has ' + stock_name)
         else:
-            file.write('{"stock_name": "' + stock_name + '", "company_index": "' + index + '"}' + '\n')
-
-
-def index_selection():
-    pass
+            file.write(stock_name +' '+ index + '\n')
