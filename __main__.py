@@ -132,6 +132,8 @@ class StockFrame(customtkinter.CTkFrame):
             index_entry.delete(0, 'end')
             name_entry.delete(0, 'end')
 
+    def update_frames():
+        pass
 
     # Frame deleting function
     def delete_frame(self):
