@@ -1,6 +1,8 @@
 # This file contains side non-class functions
 import requests
 from bs4 import BeautifulSoup
+
+
 def get_stock_data(stock_name, index):
     base_url = "https://www.google.com/finance"
     company_index = index

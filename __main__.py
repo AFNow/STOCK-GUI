@@ -131,7 +131,8 @@ class StockFrame(customtkinter.CTkFrame):
             info_label.configure(text = 'Wrong names', text_color = 'red')
             index_entry.delete(0, 'end')
             name_entry.delete(0, 'end')
-   
+
+
     # Frame deleting function
     def delete_frame(self):
         self.frame.destroy()
