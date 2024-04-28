@@ -42,9 +42,10 @@ bottom_frame.grid(row=9, column=0, sticky='nsew')
 
 #Stock frame class
 class StockFrame(customtkinter.CTkFrame):
-    def __init__(self, master, stock_name, stock_cost, stock_change, stock_raise, **kwargs):
+    def __init__(self, master, stock_name, index_name, stock_cost, stock_change, stock_raise, **kwargs):
         self.root = main_frame
         self.stock_name = stock_name
+        self.index_name = index_name
         super().__init__(master, **kwargs)
         self.frame = customtkinter.CTkFrame(master=main_frame,
                                             width=300, height=110,
@@ -104,7 +105,8 @@ class StockFrame(customtkinter.CTkFrame):
                     stock_cost = 'Last close: $' + stock_data.get('last_close') + '    ' + 'Now: $' + stock_data.get('item_cost')
                     stock_change = round(stock_data.get('change'))
                     stock_raise = round((float(stock_change) / float(stock_data.get('item_cost'))) * 100, 2)
-                    stock_frame = StockFrame(main_frame, stock_name=splitted_text[index], stock_cost=stock_cost, stock_change=stock_change, stock_raise=stock_raise)
+                    stock_frame = StockFrame(main_frame, stock_name=splitted_text[index], index_name = splitted_text[index+1], 
+                                             stock_cost=stock_cost, stock_change=stock_change, stock_raise=stock_raise)
                     index += 2
             else:
                 pass    
@@ -120,20 +122,25 @@ class StockFrame(customtkinter.CTkFrame):
                 stock_cost = 'Close: $' + stock_data.get('last_close') + '          ' + 'Now: $' + stock_data.get('item_cost')
                 stock_change = round(stock_data.get('change'))
                 stock_raise = round((float(stock_change) / float(stock_data.get('item_cost'))) * 100, 2)
-                stock_frame = StockFrame(main_frame, stock_name=entry_str, stock_cost=stock_cost, stock_change=stock_change, stock_raise=stock_raise)
-                info_label.configure(text = 'Done', text_color = 'green')
+                stock_frame = StockFrame(main_frame, stock_name=entry_str, index_name = index_choice, stock_cost=stock_cost, stock_change=stock_change, stock_raise=stock_raise)
+                info_label.configure(text = 'Stock added', text_color = 'green')
                 save_stock(entry_str, index_choice)
                 index_entry.delete(0, 'end')
                 name_entry.delete(0, 'end')
         except AttributeError:
-            info_label.configure(text = 'Wrong name', text_color = 'red')
+            info_label.configure(text = 'Wrong names', text_color = 'red')
             index_entry.delete(0, 'end')
             name_entry.delete(0, 'end')
    
     # Frame deleting function
     def delete_frame(self):
         self.frame.destroy()
-
+        with open('stocks.json', mode = 'r', encoding='utf-8') as file:
+            text = file.readlines()
+            text = [item.replace(self.stock_name + ' ' + self.index_name +'\n', '') for item in text]
+        with open('stocks.json', 'w', encoding='utf-8') as file:
+            file.writelines(text)
+        info_label.configure(text = 'Stock deleted', text_color = 'white')
 
 # Add button settings
 add_btn = customtkinter.CTkButton(master= bottom_frame, text= 'Add new', command= StockFrame.open_new_frame, height= 35, width= 145)
@@ -168,4 +175,3 @@ StockFrame.restore_frames()
 STOCK_GUI.mainloop()
 
 # Добавить цикл обновления фреймов
-# Добавить функцию удаления из файла

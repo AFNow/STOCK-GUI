@@ -28,10 +28,6 @@ def save_stock(stock_name, index):
         else:
             file.write(stock_name +' '+ index + '\n')
 
-
-def delete_stock(stock_name, index):
-    pass
-
 # The font color operation for the status
 def status_color_changer():
     pass
