@@ -23,7 +23,7 @@ def get_stock_data(stock_name, index):
 
 # Writing the stock_description to the file
 def save_stock(stock_name, index):
-    with open('stocks.json', mode = 'r+', encoding='utf-8') as file:
+    with open('stocks.json', mode = 'r+', encoding='utf-8') as file: # stocks.json
         text = file.read()
         if stock_name in text:
             pass
