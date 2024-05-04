@@ -11,6 +11,9 @@ from functions import *
 import sys
 import os
 
+import threading
+from threading import Thread
+
 if getattr(sys, 'frozen', False):
     application_path = sys._MEIPASS
 else:
@@ -101,6 +104,15 @@ class StockFrame(customtkinter.CTkFrame):
     # The stock_frame default state
     stock_frame = None
     
+#    def start_update_thread(self):
+#        thread = Thread(target=self.update_frame, daemon=True)
+#        thread.start()
+#    
+#    def update_frame(self):
+#        while True:
+#            time.sleep(10)
+#           print (self.stock_name)
+
     # Cоздание экземпляра класса StockFrame при запуске, из файла stocks.json
     def restore_frames():
         global stock_frame
@@ -141,8 +153,12 @@ class StockFrame(customtkinter.CTkFrame):
             index_entry.delete(0, 'end')
             name_entry.delete(0, 'end')
 
-    def update_frames():
-        pass
+
+    def new_frame_threading():
+        thread = Thread(target = StockFrame.open_new_frame, daemon = True)
+        thread.start()
+        return thread
+
 
     # Frame deleting function
     def delete_frame(self):
@@ -155,7 +171,7 @@ class StockFrame(customtkinter.CTkFrame):
         info_label.configure(text = 'Stock deleted', text_color = 'white')
 
 # Add button settings
-add_btn = customtkinter.CTkButton(master= bottom_frame, text= 'Add new', command= StockFrame.open_new_frame, height= 35, width= 145)
+add_btn = customtkinter.CTkButton(master= bottom_frame, text= 'Add new', command= StockFrame.new_frame_threading, height= 35, width= 145)
 add_btn.place(anchor = customtkinter.SE, relx = 0.95, rely = 0.8)
 
 # Entry for the stock name's settings
