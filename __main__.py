@@ -5,13 +5,13 @@ This file contains the base interface, for now..., and theme settings + comments
 import time
 
 import customtkinter # UI library
+import tkinter
 
 from functions import *
 
 import sys
 import os
 
-import threading
 from threading import Thread
 
 if getattr(sys, 'frozen', False):
@@ -77,43 +77,52 @@ class StockFrame(customtkinter.CTkFrame):
         else:
             actual_color = 'white'
 
+
         # The label of stock's name 
-        name_var = stock_name 
-        self.name_label = customtkinter.CTkLabel(master=self.frame, textvariable=name_var, font = main_label_font, text= name_var, text_color = 'white')
+        self.name_var = tkinter.StringVar(value=stock_name)
+        self.name_label = customtkinter.CTkLabel(master=self.frame, textvariable=self.name_var, font = main_label_font, text_color = 'white')
         self.name_label.place(relx=0.1, rely=0.3, anchor=customtkinter.W)
 
         # The label of stock's cost 
-        cost_var = stock_cost 
-        self.cost_label = customtkinter.CTkLabel(master=self.frame, textvariable=cost_var, font = secondary_label_font, text= cost_var, text_color = actual_color)
+        self.cost_var = tkinter.StringVar(value=stock_cost)
+        self.cost_label = customtkinter.CTkLabel(master=self.frame, textvariable=self.cost_var, font = secondary_label_font, text_color = actual_color)
         self.cost_label.place(relx=0.1, rely=0.63, anchor=customtkinter.W)   
 
         # The label of stock's raise
-        stock_change_var = 'Earnings: $' + str(stock_change) 
-        self.change_label = customtkinter.CTkLabel(master=self.frame, textvariable=stock_change_var, font = secondary_label_font, text= stock_change_var, text_color = actual_color)
+        self.change_var = tkinter.StringVar(value='Earnings: $' + str(stock_change))
+        self.change_label = customtkinter.CTkLabel(master=self.frame, textvariable=self.change_var, font = secondary_label_font, text_color = actual_color)
         self.change_label.place(relx=0.1, rely=0.83, anchor=customtkinter.W)   
         
         # The label of stock's raise %
-        raise_percent_var = str(stock_raise) + '%'
-        self.raise_percent_label = customtkinter.CTkLabel(master=self.frame, textvariable=raise_percent_var, font = main_label_font, text= raise_percent_var, text_color = actual_color)
+        self.raise_percent_var = tkinter.StringVar(value=str(stock_raise) + '%')
+        self.raise_percent_label = customtkinter.CTkLabel(master=self.frame, textvariable=self.raise_percent_var, font = main_label_font, text_color = actual_color)
         self.raise_percent_label.place(relx=0.9, rely=0.3, anchor=customtkinter.E)   
 
         delete_btn = customtkinter.CTkButton(master=self.frame, text='', command=self.delete_frame,
                                           height=10, width=295, corner_radius = 13, fg_color = 'transparent', hover_color='#9c322a')
         delete_btn.place(relx=0.5, rely=0.98, anchor=customtkinter.CENTER)
 
+        def update():
+            global stock_frame
+            while True:
+                time.sleep(3600)
+                stock_data = get_stock_data(stock_name, index_name)
+                updated_cost_label = 'Last close: $' + stock_data.get('last_close') + '    ' + 'Now: $' + stock_data.get('item_cost')
+                self.cost_var.set(updated_cost_label)
+                updated_stock_change = round(stock_data.get('change'))
+                self.change_var.set('Earnings: $' + str(updated_stock_change))
+                updated_stock_raise = round((float(updated_stock_change) / float(stock_data.get('item_cost'))) * 100, 2)
+                self.raise_percent_var.set(str(updated_stock_raise)  + '%')
+
+        def update_available():
+            thread = Thread(target = update, daemon = True)
+            thread.start()
+            return thread
+        update_available()
+
     # The stock_frame default state
     stock_frame = None
-    
-#    def start_update_thread(self):
-#        thread = Thread(target=self.update_frame, daemon=True)
-#        thread.start()
-#    
-#    def update_frame(self):
-#        while True:
-#            time.sleep(10)
-#           print (self.stock_name)
-
-    # Cоздание экземпляра класса StockFrame при запуске, из файла stocks.json
+    # Creation of the StockFrame example at INIT from stocks.json file
     def restore_frames():
         global stock_frame
         with open('stocks.json', mode = 'r', encoding='utf-8') as file: # stocks.json
@@ -152,7 +161,6 @@ class StockFrame(customtkinter.CTkFrame):
             info_label.configure(text = 'Wrong names', text_color = 'red')
             index_entry.delete(0, 'end')
             name_entry.delete(0, 'end')
-
 
     def new_frame_threading():
         thread = Thread(target = StockFrame.open_new_frame, daemon = True)
@@ -201,5 +209,3 @@ STOCK_GUI.grid_columnconfigure(0, weight=1)
 # The frame restore and mainloop
 StockFrame.restore_frames()
 STOCK_GUI.mainloop()
-
-# Добавить цикл обновления фреймов
