@@ -1,4 +1,7 @@
-# This file contains side non-class functions
+'''
+This file contains side non-class functions
+
+'''
 import requests
 from bs4 import BeautifulSoup
 
@@ -29,7 +32,3 @@ def save_stock(stock_name, index):
             pass
         else:
             file.write(stock_name +' '+ index + '\n')
-
-# The font color operation for the status
-def status_color_changer():
-    pass

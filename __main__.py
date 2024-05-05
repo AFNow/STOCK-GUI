@@ -1,5 +1,5 @@
 '''
-This file contains the base interface, for now..., and theme settings + comments
+This file contains the base interface and main class functions, theme settings + comments
 
 '''
 import time
@@ -102,10 +102,11 @@ class StockFrame(customtkinter.CTkFrame):
                                           height=10, width=295, corner_radius = 13, fg_color = 'transparent', hover_color='#9c322a')
         delete_btn.place(relx=0.5, rely=0.98, anchor=customtkinter.CENTER)
 
+        # The updating function for added varuables in every time.sleep() period
         def update():
             global stock_frame
             while True:
-                time.sleep(3600)
+                time.sleep(1800)
                 stock_data = get_stock_data(stock_name, index_name)
                 updated_cost_label = 'Last close: $' + stock_data.get('last_close') + '    ' + 'Now: $' + stock_data.get('item_cost')
                 self.cost_var.set(updated_cost_label)
@@ -113,12 +114,13 @@ class StockFrame(customtkinter.CTkFrame):
                 self.change_var.set('Earnings: $' + str(updated_stock_change))
                 updated_stock_raise = round((float(updated_stock_change) / float(stock_data.get('item_cost'))) * 100, 2)
                 self.raise_percent_var.set(str(updated_stock_raise)  + '%')
-
+        # Threading for the update function
         def update_available():
             thread = Thread(target = update, daemon = True)
             thread.start()
             return thread
         update_available()
+
 
     # The stock_frame default state
     stock_frame = None
@@ -162,6 +164,7 @@ class StockFrame(customtkinter.CTkFrame):
             index_entry.delete(0, 'end')
             name_entry.delete(0, 'end')
 
+    # Threading for the creation method
     def new_frame_threading():
         thread = Thread(target = StockFrame.open_new_frame, daemon = True)
         thread.start()
@@ -193,7 +196,6 @@ index_entry.place (anchor = customtkinter.SW, relx = 0.05, rely = 0.4)
 # Info-label 
 main_label_font = customtkinter.CTkFont(family="Roboto", size=20, weight="bold")
 status = None
-status_color = status_color_changer()
 info_label = customtkinter.CTkLabel(master=bottom_frame, textvariable=status, font = main_label_font, text= status)
 info_label.place(anchor = customtkinter.CENTER, relx = 0.73, rely = 0.3)
 
