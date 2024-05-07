@@ -3,7 +3,7 @@
 block_cipher = None
 
 a = Analysis(['__main__.py', 'functions.py'],
-             pathex=['C:/Users/Ven0m/Desktop/STOCK-GUI'],
+             pathex=['C:/Users/USER/Desktop/STOCK-GUI'],
              binaries=[],
              datas=[('Roboto.ttf', '.'), ('stock_icon-favi.ico', '.'), ('stocks.json', '.'), ('theme.json', '.')],
              hiddenimports=[],
