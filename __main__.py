@@ -9,16 +9,8 @@ import tkinter
 
 from functions import *
 
-import sys
-import os
-
 from threading import Thread
 
-if getattr(sys, 'frozen', False):
-    application_path = sys._MEIPASS
-else:
-    application_path = os.path.dirname(os.path.abspath(__file__))
-theme_path = os.path.join(application_path, 'theme.json')
 
 # Window arguments
 STOCK_GUI = customtkinter.CTk()
@@ -54,7 +46,7 @@ bottom_frame.grid(row=9, column=0, sticky='nsew')
 
 #Stock frame class
 class StockFrame(customtkinter.CTkFrame):
-    def __init__(self, master, stock_name, index_name, stock_cost, stock_change, stock_raise, **kwargs):
+    def __init__(self, master, stock_name, index_name, close_stock_cost, now_stock_cost, stock_change, stock_raise, **kwargs):
         self.root = main_frame
         self.stock_name = stock_name
         self.index_name = index_name
@@ -66,8 +58,9 @@ class StockFrame(customtkinter.CTkFrame):
                                             border_color=None)
         self.frame.pack(anchor=customtkinter.CENTER, expand=False, pady=10)
 
-        main_label_font = customtkinter.CTkFont(family="Roboto", size=35, weight="bold")
-        secondary_label_font = customtkinter.CTkFont(family="Roboto", size=12, weight="bold")
+        customtkinter.FontManager.load_font('Roboto.ttf')
+        main_label_font = customtkinter.CTkFont(family='Roboto', size=35, weight='bold')
+        secondary_label_font = customtkinter.CTkFont(family='Roboto', size=12, weight='bold')
 
         # The font color operation for the stock var's
         if stock_change > 0:
@@ -83,15 +76,20 @@ class StockFrame(customtkinter.CTkFrame):
         self.name_label = customtkinter.CTkLabel(master=self.frame, textvariable=self.name_var, font = main_label_font, text_color = 'white')
         self.name_label.place(relx=0.1, rely=0.3, anchor=customtkinter.W)
 
-        # The label of stock's cost 
-        self.cost_var = tkinter.StringVar(value=stock_cost)
-        self.cost_label = customtkinter.CTkLabel(master=self.frame, textvariable=self.cost_var, font = secondary_label_font, text_color = actual_color)
+        # The label of stock's close cost 
+        self.close_cost_var = tkinter.StringVar(value=close_stock_cost)
+        self.cost_label = customtkinter.CTkLabel(master=self.frame, textvariable=self.close_cost_var, font = secondary_label_font, text_color = actual_color)
         self.cost_label.place(relx=0.1, rely=0.63, anchor=customtkinter.W)   
+
+        # The label of stock's actual cost 
+        self.now_cost_var = tkinter.StringVar(value=now_stock_cost)
+        self.cost_label = customtkinter.CTkLabel(master=self.frame, textvariable=self.now_cost_var, font = secondary_label_font, text_color = actual_color)
+        self.cost_label.place(relx=0.1, rely=0.83, anchor=customtkinter.W)   
 
         # The label of stock's raise
         self.change_var = tkinter.StringVar(value='Earnings: $' + str(stock_change))
         self.change_label = customtkinter.CTkLabel(master=self.frame, textvariable=self.change_var, font = secondary_label_font, text_color = actual_color)
-        self.change_label.place(relx=0.1, rely=0.83, anchor=customtkinter.W)   
+        self.change_label.place(relx=0.9, rely=0.63, anchor=customtkinter.E)   
         
         # The label of stock's raise %
         self.raise_percent_var = tkinter.StringVar(value=str(stock_raise) + '%')
@@ -108,8 +106,10 @@ class StockFrame(customtkinter.CTkFrame):
             while True:
                 time.sleep(1800)
                 stock_data = get_stock_data(stock_name, index_name)
-                updated_cost_label = 'Last close: $' + stock_data.get('last_close') + '    ' + 'Now: $' + stock_data.get('item_cost')
-                self.cost_var.set(updated_cost_label)
+                updated_close_cost_label = 'Last close: $' + stock_data.get('last_close')
+                self.close_cost_var.set(updated_close_cost_label)
+                updated_now_stock_cost = 'Now: $' + stock_data.get('item_cost')
+                self.now_cost_var.set(updated_now_stock_cost)
                 updated_stock_change = round(stock_data.get('change'))
                 self.change_var.set('Earnings: $' + str(updated_stock_change))
                 updated_stock_raise = round((float(updated_stock_change) / float(stock_data.get('item_cost'))) * 100, 2)
@@ -134,11 +134,12 @@ class StockFrame(customtkinter.CTkFrame):
                 index = 0
                 while index != len(splitted_text):
                     stock_data = get_stock_data(splitted_text[index], splitted_text[index+1])
-                    stock_cost = 'Last close: $' + stock_data.get('last_close') + '    ' + 'Now: $' + stock_data.get('item_cost')
+                    close_stock_cost = 'Last close: $' + stock_data.get('last_close')
+                    now_stock_cost = 'Now: $' + stock_data.get('item_cost')
                     stock_change = round(stock_data.get('change'))
                     stock_raise = round((float(stock_change) / float(stock_data.get('item_cost'))) * 100, 2)
                     stock_frame = StockFrame(main_frame, stock_name=splitted_text[index], index_name = splitted_text[index+1], 
-                                             stock_cost=stock_cost, stock_change=stock_change, stock_raise=stock_raise)
+                                             close_stock_cost=close_stock_cost, now_stock_cost=now_stock_cost, stock_change=stock_change, stock_raise=stock_raise)
                     index += 2
             else:
                 pass    
@@ -151,10 +152,11 @@ class StockFrame(customtkinter.CTkFrame):
             index_choice = index_entry.get()
             if entry_str != '':
                 stock_data = get_stock_data(entry_str, index_choice)
-                stock_cost = 'Close: $' + stock_data.get('last_close') + '          ' + 'Now: $' + stock_data.get('item_cost')
+                close_stock_cost = 'Close: $' + stock_data.get('last_close')
+                now_stock_cost = 'Now: $' + stock_data.get('item_cost')
                 stock_change = round(stock_data.get('change'))
                 stock_raise = round((float(stock_change) / float(stock_data.get('item_cost'))) * 100, 2)
-                stock_frame = StockFrame(main_frame, stock_name=entry_str, index_name = index_choice, stock_cost=stock_cost, stock_change=stock_change, stock_raise=stock_raise)
+                stock_frame = StockFrame(main_frame, stock_name=entry_str, index_name = index_choice, close_stock_cost=close_stock_cost, now_stock_cost=now_stock_cost, stock_change=stock_change, stock_raise=stock_raise)
                 info_label.configure(text = 'Stock added', text_color = 'green')
                 save_stock(entry_str, index_choice)
                 index_entry.delete(0, 'end')
