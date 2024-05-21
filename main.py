@@ -2,6 +2,13 @@
 This file contains the base interface and main class functions, theme settings + comments
 
 '''
+import os
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+theme_path = os.path.join(BASE_DIR, 'theme.json')
+icon_path = os.path.join(BASE_DIR, 'stock_icon-favi.ico')
+stocks_path = os.path.join(BASE_DIR, 'stocks.json')
+font_path = os.path.join(BASE_DIR, 'font.ttf')
+
 import time
 
 import customtkinter # UI library
@@ -21,10 +28,10 @@ rootWidth = STOCK_GUI.winfo_width()
 
 # Default visual theme
 customtkinter.set_appearance_mode('dark') 
-customtkinter.set_default_color_theme("resources/theme.json") # resources/theme.json
+customtkinter.set_default_color_theme(theme_path) # theme.json
 
 # Setting window icon
-STOCK_GUI.iconbitmap('resources/stock_icon-favi.ico') # resources/stock_icon-favi.ico
+STOCK_GUI.iconbitmap(icon_path) # stock_icon-favi.ico
 
 # Default window size
 window_size_x = 340
@@ -59,9 +66,9 @@ class StockFrame(customtkinter.CTkFrame):
         self.frame.pack(anchor=customtkinter.CENTER, expand=False, pady=10)
 
 
-        customtkinter.FontManager.load_font('Roboto.ttf')
-        main_label_font = customtkinter.CTkFont(family='Roboto', size=35, weight='bold')
-        secondary_label_font = customtkinter.CTkFont(family='Roboto', size=12, weight='bold')
+        customtkinter.FontManager.load_font(font_path)
+        main_label_font = customtkinter.CTkFont(family=font_path, size=35, weight='bold')
+        secondary_label_font = customtkinter.CTkFont(family=font_path, size=12, weight='bold')
 
         # The label of stock's name 
         self.name_var = tkinter.StringVar(value=stock_name)
@@ -138,7 +145,7 @@ class StockFrame(customtkinter.CTkFrame):
     # Creation of the StockFrame example at INIT from stocks.json file
     def restore_frames():
         global stock_frame
-        with open('stocks.json', mode = 'r', encoding='utf-8') as file: # stocks.json
+        with open(stocks_path, mode = 'r', encoding='utf-8') as file: # stocks.json
             text = file.read()
             if text != '':
                 splitted_text = text.split()
@@ -187,10 +194,10 @@ class StockFrame(customtkinter.CTkFrame):
     # Frame deleting function
     def delete_frame(self):
         self.frame.destroy()
-        with open('stocks.json', mode = 'r', encoding='utf-8') as file: # stocks.json
+        with open(stocks_path, mode = 'r', encoding='utf-8') as file: # stocks.json
             text = file.readlines()
             text = [item.replace(self.stock_name + ' ' + self.index_name +'\n', '') for item in text]
-        with open('stocks.json', 'w', encoding='utf-8') as file: # stocks.json
+        with open(stocks_path, 'w', encoding='utf-8') as file: # stocks.json
             file.writelines(text)
         info_label.configure(text = 'Stock deleted', text_color = 'white')
 
@@ -207,7 +214,7 @@ index_entry = customtkinter.CTkEntry(master=bottom_frame, placeholder_text="The 
 index_entry.place (anchor = customtkinter.SW, relx = 0.05, rely = 0.4)
 
 # Info-label 
-main_label_font = customtkinter.CTkFont(family="Roboto", size=20, weight="bold")
+main_label_font = customtkinter.CTkFont(family=font_path, size=20, weight="bold")
 status = None
 info_label = customtkinter.CTkLabel(master=bottom_frame, textvariable=status, font = main_label_font, text= status)
 info_label.place(anchor = customtkinter.CENTER, relx = 0.73, rely = 0.3)

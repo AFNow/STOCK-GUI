@@ -2,10 +2,10 @@
 
 block_cipher = None
 
-a = Analysis(['__main__.py', 'functions.py'],
+a = Analysis(['main.py', 'functions.py'],
              pathex=['C:/Users/USER/Desktop/STOCK-GUI'],
              binaries=[],
-             datas=[('Roboto.ttf', '.'), ('stock_icon-favi.ico', '.'), ('stocks.json', '.'), ('theme.json', '.')],
+             datas=[('font.ttf', '.'), ('stock_icon-favi.ico', '.'), ('stocks.json', '.'), ('theme.json', '.')],
              hiddenimports=[],
              hookspath=[],
              runtime_hooks=[],

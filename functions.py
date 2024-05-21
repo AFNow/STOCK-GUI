@@ -4,7 +4,9 @@ This file contains side non-class functions
 '''
 import requests
 from bs4 import BeautifulSoup
-
+import os
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+stocks_path = os.path.join(BASE_DIR, 'stocks.json')
 
 def get_stock_data(stock_name, index):
     base_url = "https://www.google.com/finance"
@@ -26,7 +28,7 @@ def get_stock_data(stock_name, index):
 
 # Writing the stock_description to the file
 def save_stock(stock_name, index):
-    with open('stocks.json', mode = 'r+', encoding='utf-8') as file: # stocks.json
+    with open(stocks_path, mode = 'r+', encoding='utf-8') as file: # stocks.json
         text = file.read()
         if stock_name in text:
             pass
