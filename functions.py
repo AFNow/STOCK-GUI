@@ -21,8 +21,17 @@ def get_stock_data(stock_name, index):
     # Packing the description in dictionary
     stock_description = {}
     stock_description['item_cost'] = soup.find("div", {"class": "YMlKec fxKbKc"}).text[1:]
+    if len(stock_description['item_cost']) >= 7:
+        replace = stock_description['item_cost']
+        replace = replace.replace(',', '')
+        stock_description['item_cost'] = replace
     stock_description['last_close'] = soup.find("div", {"class": "P6K39c"}).text[1:]
-    stock_description['change'] =float(stock_description.get('item_cost')) - float(stock_description.get('last_close'))
+    if len(stock_description['last_close']) >= 7:
+        replace = stock_description['last_close']
+        replace = replace.replace(',', '')
+        stock_description['last_close'] = replace
+    stock_description['change'] = float(stock_description.get('item_cost')) - float(stock_description.get('last_close'))
+    print(stock_description)
     return stock_description
 
 
